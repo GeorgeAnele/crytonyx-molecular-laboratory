@@ -1,32 +1,28 @@
 /*
 ==============================================================================
-Project: crytonyx_enteprice_dw
 Script: Bronze Layer Load Procedure
+Project: crytonyx_enterprise_dw
 Author: George Anele
-Date: 26-Dec-2025
-
+Date: 26-12-2025
 Purpose:
-    This procedure orchestrates the end-to-end loading of raw source data
-    into the Bronze layer by:
-    - Truncating staging tables
-    - Bulk loading CSV files into stage
-    - Persisting data into raw Bronze tables with ingestion metadata
-
+    Orchestrates raw ingestion of CSV datasets into the Bronze layer.
+    - Preserves data as-is from source systems: LIMS, Billing, Logistics.
+    - Adds ingestion metadata for lineage and auditing.
+    - Idempotent execution via TRUNCATE + reload of staging tables.
 Usage Notes:
-    - Designed for batch execution as part of the Bronze ingestion pipeline.
-    - Each execution generates a unique ingestion_id for lineage tracking.
-    - Source files are assumed to be available at the configured file paths.
+    - Bronze layer stores raw data with minimal or no transformation.
+    - Performance metrics are captured per dataset and per batch.
+    - Errors are centrally handled and logged via TRY...CATCH.
 ==============================================================================
 */
-
--- Execute the Bronze load procedure
-EXEC bronze.load_bronze
-GO
 
 CREATE OR ALTER PROCEDURE bronze.load_bronze
 AS
 BEGIN
     SET NOCOUNT ON;
+    ------------------------------------------------------------
+    -- Suppress row count messages for clean logs
+    ------------------------------------------------------------
 
     DECLARE 
         @batch_start_time DATETIME2(3),
@@ -34,9 +30,14 @@ BEGIN
         @start_time       DATETIME2(3),
         @end_time         DATETIME2(3),
         @ingestion_id     UNIQUEIDENTIFIER;
+    ------------------------------------------------------------
+    -- Batch timing and metadata variables
+    ------------------------------------------------------------
 
     BEGIN TRY
-        -- Initialize batch-level metadata
+        ------------------------------------------------------------
+        -- Initialize batch metadata
+        ------------------------------------------------------------
         SET @batch_start_time = SYSDATETIME();
         SET @ingestion_id = NEWID();
 
@@ -47,15 +48,21 @@ BEGIN
 
         /* ============================================================
            1. LAB TEST DATA
-           ============================================================ */
+        ============================================================ */
 
+        PRINT '================================================';
         PRINT 'Loading LAB TEST data';
+        PRINT '================================================';
 
-        -- Reset stage table to guarantee a clean batch load
         SET @start_time = SYSDATETIME();
+        ------------------------------------------------------------
+        -- Clear staging table for repeatable execution
+        ------------------------------------------------------------
         TRUNCATE TABLE bronze.lab_test_stage;
 
-        -- Bulk load raw CSV data into staging
+        ------------------------------------------------------------
+        -- Bulk load CSV into staging table
+        ------------------------------------------------------------
         BULK INSERT bronze.lab_test_stage
         FROM 'C:\Users\user\Desktop\DATA ENGR\Crytonyx_lab\datasets\lab_test.csv'
         WITH (
@@ -65,7 +72,11 @@ BEGIN
             TABLOCK
         );
 
-        -- Persist staged data into Bronze raw table with ingestion metadata
+        PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from lab_test.csv';
+
+        ------------------------------------------------------------
+        -- Insert staged data into Bronze raw table with metadata
+        ------------------------------------------------------------
         INSERT INTO bronze.lab_test_raw (
             pt_id,
             test_date,
@@ -109,9 +120,11 @@ BEGIN
 
         /* ============================================================
            2. BILLING INVOICE DATA
-           ============================================================ */
+        ============================================================ */
 
+        PRINT '================================================';
         PRINT 'Loading BILLING data';
+        PRINT '================================================';
 
         SET @start_time = SYSDATETIME();
         TRUNCATE TABLE bronze.billing_invoice_stage;
@@ -124,6 +137,8 @@ BEGIN
             ROWTERMINATOR = '0x0a',
             TABLOCK
         );
+
+        PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from billing_invoice.csv';
 
         INSERT INTO bronze.billing_invoice_raw (
             invoice_number,
@@ -168,9 +183,11 @@ BEGIN
 
         /* ============================================================
            3. SAMPLE SHIPMENT DATA
-           ============================================================ */
+        ============================================================ */
 
+        PRINT '================================================';
         PRINT 'Loading SHIPMENT data';
+        PRINT '================================================';
 
         SET @start_time = SYSDATETIME();
         TRUNCATE TABLE bronze.sample_shipment_stage;
@@ -183,6 +200,8 @@ BEGIN
             ROWTERMINATOR = '0x0a',
             TABLOCK
         );
+
+        PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from sample_shipment.csv';
 
         INSERT INTO bronze.sample_shipment_raw (
             shipment_id,
@@ -219,7 +238,13 @@ BEGIN
             SYSDATETIME()
         FROM bronze.sample_shipment_stage;
 
-        -- Capture batch completion timestamp
+        SET @end_time = SYSDATETIME();
+        PRINT 'SHIPMENT load duration (sec): ' 
+            + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS VARCHAR);
+
+        ------------------------------------------------------------
+        -- Finalize batch timing
+        ------------------------------------------------------------
         SET @batch_end_time = SYSDATETIME();
 
         PRINT '================================================';
@@ -230,12 +255,15 @@ BEGIN
 
     END TRY
     BEGIN CATCH
-        -- Surface error details and rethrow for upstream handling
-        PRINT '================================================';
-        PRINT 'ERROR DURING BRONZE LOAD';
-        PRINT ERROR_MESSAGE();
-        PRINT '================================================';
-        THROW;
+        ------------------------------------------------------------
+        -- Capture and print any errors during Bronze load
+        ------------------------------------------------------------
+        PRINT '========================================';
+        PRINT 'ERROR OCCURRED DURING LOADING BRONZE LAYER';
+        PRINT 'Error Message: ' + ERROR_MESSAGE();
+        PRINT 'Error Number: ' + CAST(ERROR_NUMBER() AS NVARCHAR);
+        PRINT 'Error State: ' + CAST(ERROR_STATE() AS NVARCHAR);
+        PRINT '========================================';
     END CATCH
 END;
 GO
