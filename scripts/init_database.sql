@@ -1,12 +1,25 @@
+/*
+==============================================================================
+Project: crytonyx_enteprice_dw
+Script: Database and Schema Initialization
+Author: George Anele
+Date: 26-Dec-2025
+
+Purpose:
+    This script initializes the Crytonyx Enterprise Data Warehouse by:
+    - Dropping and recreating the database (non-production only)
+    - Establishing schema layers aligned to the medallion architecture
+
+Usage Notes:
+    - Intended strictly for development, testing, or portfolio environments.
+    - Executing this script will permanently delete all existing data.
+==============================================================================
+*/
+
 USE master;
 GO
 
-/* =========================================================
-   NON-PRODUCTION ONLY
-   This script DROPS and RECREATES the database.
-   Intended for DEV / PORTFOLIO environments only.
-   ========================================================= */
-
+-- NON-PRODUCTION ONLY: Drop and recreate database to ensure a clean baseline
 IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'crytonyx_enterprise_dw')
 BEGIN
     ALTER DATABASE crytonyx_enterprise_dw
@@ -23,26 +36,24 @@ GO
 USE crytonyx_enterprise_dw;
 GO
 
-/* =========================================================
-   Schema Layering (Medallion Architecture)
-   ========================================================= */
+-- Schema layering following the medallion architecture pattern
 
--- Raw ingestion layer
+-- Raw ingestion and landing zone
 CREATE SCHEMA bronze;
 GO
 
--- Cleansed and conformed layer
+-- Cleansed, standardized, and conformed data
 CREATE SCHEMA silver;
 GO
 
--- Analytics and reporting layer
+-- Business-ready analytics and reporting layer
 CREATE SCHEMA gold;
 GO
 
--- Data quality, lineage, and load tracking
+-- Data quality checks, lineage, and load auditing
 CREATE SCHEMA audit;
 GO
 
--- Reference and static datasets
+-- Reference and static lookup datasets
 CREATE SCHEMA ref;
 GO
