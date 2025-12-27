@@ -32,7 +32,7 @@ CREATE TABLE silver.lab_test (
     first_name         VARCHAR(100) NOT NULL,
     last_name          VARCHAR(100) NOT NULL,
     age                INT CHECK (age BETWEEN 0 AND 120),
-    gender             CHAR(1) CHECK (gender IN ('M','F')),
+    gender             CHAR(10),
     marital_status     VARCHAR(20),
 
     country            VARCHAR(100),
