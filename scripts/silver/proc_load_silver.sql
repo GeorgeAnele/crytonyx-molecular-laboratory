@@ -2,7 +2,6 @@
 ==============================================================================
 Script: Silver Layer Load Procedure
 Project: crytonyx_enterprise_dw
-Object: silver.load_silver
 Author: George Anele
 Created: 27-Dec-2025
 
