@@ -16,13 +16,12 @@ Usage Notes:
 ==============================================================================
 */
 
+EXEC bronze.load_bronze
+
 CREATE OR ALTER PROCEDURE bronze.load_bronze
 AS
 BEGIN
     SET NOCOUNT ON;
-    ------------------------------------------------------------
-    -- Suppress row count messages for clean logs
-    ------------------------------------------------------------
 
     DECLARE 
         @batch_start_time DATETIME2(3),
@@ -30,14 +29,8 @@ BEGIN
         @start_time       DATETIME2(3),
         @end_time         DATETIME2(3),
         @ingestion_id     UNIQUEIDENTIFIER;
-    ------------------------------------------------------------
-    -- Batch timing and metadata variables
-    ------------------------------------------------------------
 
     BEGIN TRY
-        ------------------------------------------------------------
-        -- Initialize batch metadata
-        ------------------------------------------------------------
         SET @batch_start_time = SYSDATETIME();
         SET @ingestion_id = NEWID();
 
@@ -55,14 +48,9 @@ BEGIN
         PRINT '================================================';
 
         SET @start_time = SYSDATETIME();
-        ------------------------------------------------------------
-        -- Clear staging table for repeatable execution
-        ------------------------------------------------------------
+
         TRUNCATE TABLE bronze.lab_test_stage;
 
-        ------------------------------------------------------------
-        -- Bulk load CSV into staging table
-        ------------------------------------------------------------
         BULK INSERT bronze.lab_test_stage
         FROM 'C:\Users\user\Desktop\DATA ENGR\Crytonyx_lab\datasets\lab_test.csv'
         WITH (
@@ -75,8 +63,10 @@ BEGIN
         PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from lab_test.csv';
 
         ------------------------------------------------------------
-        -- Insert staged data into Bronze raw table with metadata
+        -- ✅ ADDED: Clear Bronze RAW table before insert
         ------------------------------------------------------------
+        TRUNCATE TABLE bronze.lab_test_raw;
+
         INSERT INTO bronze.lab_test_raw (
             pt_id,
             test_date,
@@ -127,6 +117,7 @@ BEGIN
         PRINT '================================================';
 
         SET @start_time = SYSDATETIME();
+
         TRUNCATE TABLE bronze.billing_invoice_stage;
 
         BULK INSERT bronze.billing_invoice_stage
@@ -139,6 +130,11 @@ BEGIN
         );
 
         PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from billing_invoice.csv';
+
+        ------------------------------------------------------------
+        -- ✅ ADDED: Clear Bronze RAW table before insert
+        ------------------------------------------------------------
+        TRUNCATE TABLE bronze.billing_invoice_raw;
 
         INSERT INTO bronze.billing_invoice_raw (
             invoice_number,
@@ -190,6 +186,7 @@ BEGIN
         PRINT '================================================';
 
         SET @start_time = SYSDATETIME();
+
         TRUNCATE TABLE bronze.sample_shipment_stage;
 
         BULK INSERT bronze.sample_shipment_stage
@@ -202,6 +199,11 @@ BEGIN
         );
 
         PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from sample_shipment.csv';
+
+        ------------------------------------------------------------
+        -- ✅ ADDED: Clear Bronze RAW table before insert
+        ------------------------------------------------------------
+        TRUNCATE TABLE bronze.sample_shipment_raw;
 
         INSERT INTO bronze.sample_shipment_raw (
             shipment_id,
@@ -242,9 +244,6 @@ BEGIN
         PRINT 'SHIPMENT load duration (sec): ' 
             + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS VARCHAR);
 
-        ------------------------------------------------------------
-        -- Finalize batch timing
-        ------------------------------------------------------------
         SET @batch_end_time = SYSDATETIME();
 
         PRINT '================================================';
@@ -255,9 +254,6 @@ BEGIN
 
     END TRY
     BEGIN CATCH
-        ------------------------------------------------------------
-        -- Capture and print any errors during Bronze load
-        ------------------------------------------------------------
         PRINT '========================================';
         PRINT 'ERROR OCCURRED DURING LOADING BRONZE LAYER';
         PRINT 'Error Message: ' + ERROR_MESSAGE();
