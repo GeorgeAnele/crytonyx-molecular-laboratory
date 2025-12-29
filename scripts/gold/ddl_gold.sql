@@ -30,12 +30,9 @@ GO
 CREATE VIEW gold.dim_test AS
 SELECT
     ROW_NUMBER() OVER (ORDER BY test_name) AS test_sk,
-    test_name,
-    test_price_usd
+    test_name
 FROM (
-    SELECT DISTINCT
-        test_name,
-        test_price_usd
+    SELECT DISTINCT test_name
     FROM silver.lab_test
 ) t;
 GO
@@ -56,7 +53,7 @@ SELECT
     DATEPART(WEEKDAY, calendar_date)           AS day_of_week_number,
     DATENAME(WEEKDAY, calendar_date)           AS day_of_week_name,
     CASE 
-        WHEN DATEPART(WEEKDAY, calendar_date) IN (1,7) THEN 1 
+        WHEN DATEPART(WEEKDAY, calendar_date) IN (1, 7) THEN 1 
         ELSE 0 
     END                                        AS is_weekend
 FROM (
@@ -128,19 +125,23 @@ GO
 
 CREATE VIEW gold.fact_lab_test AS
 SELECT
-    lt.lab_test_sk            AS lab_test_sk,        -- Degenerate (optional)
-    dp.patient_sk             AS patient_sk,
-    dt.test_sk                AS test_sk,
-    dd.date_sk                AS test_date_sk,
-    dl.location_sk            AS location_sk,
+    lt.lab_test_sk        AS lab_test_id,      -- Degenerate key
+    dp.patient_sk         AS patient_sk,
+    dt.test_sk            AS test_sk,
+    dd.date_sk            AS test_date_sk,
+    dl.location_sk        AS location_sk,
 
-    lt.sample_number          AS sample_id,          -- Degenerate dimension
-    lt.test_price_usd         AS test_amount_usd
+    lt.sample_number      AS sample_id,        -- Degenerate dimension
+    lt.test_price_usd     AS test_amount_usd
 FROM silver.lab_test lt
-JOIN gold.dim_patient  dp ON lt.pt_id     = dp.patient_id
-JOIN gold.dim_test     dt ON lt.test_name = dt.test_name
-JOIN gold.dim_date     dd ON lt.test_date = dd.date
-LEFT JOIN gold.dim_location dl ON lt.country = dl.country;
+JOIN gold.dim_patient dp
+    ON lt.pt_id = dp.patient_id
+JOIN gold.dim_test dt
+    ON lt.test_name = dt.test_name
+JOIN gold.dim_date dd
+    ON lt.test_date = dd.date
+LEFT JOIN gold.dim_location dl
+    ON lt.country = dl.country;
 GO
 
 
@@ -150,32 +151,28 @@ GO
 
 CREATE VIEW gold.fact_billing_revenue AS
 SELECT
-    bi.billing_sk             AS billing_sk,        -- Degenerate
-    dp.patient_sk             AS patient_sk,
-    dt.test_sk                AS test_sk,
-    dd.date_sk                AS invoice_date_sk,
-    dpay.payment_sk           AS payment_sk,
+    bi.billing_sk         AS billing_id,       -- Degenerate key
+    dp.patient_sk         AS patient_sk,
+    dd.date_sk            AS invoice_date_sk,
+    dpay.payment_sk       AS payment_sk,
 
-    bi.invoice_number         AS invoice_id,        -- Degenerate dimension
-    bi.sample_number          AS sample_id,
+    bi.invoice_number     AS invoice_id,       -- Degenerate dimension
+    bi.sample_number      AS sample_id,
 
-    bi.currency               AS billing_currency,
-    bi.gross_amount_usd       AS gross_revenue_usd,
-    bi.tax_usd                AS tax_amount_usd,
-    bi.discount_usd           AS discount_amount_usd,
-    bi.net_amount_usd         AS net_revenue_usd
+    bi.currency           AS billing_currency,
+    bi.gross_amount_usd   AS gross_revenue_usd,
+    bi.tax_usd            AS tax_amount_usd,
+    bi.discount_usd       AS discount_amount_usd,
+    bi.net_amount_usd     AS net_revenue_usd
 FROM silver.billing_invoice bi
-JOIN gold.dim_patient dp 
+JOIN gold.dim_patient dp
     ON bi.pt_id = dp.patient_id
-JOIN gold.dim_test dt 
-    ON bi.test_name = dt.test_name
-JOIN gold.dim_date dd 
+JOIN gold.dim_date dd
     ON bi.invoice_date = dd.date
 LEFT JOIN gold.dim_payment dpay
     ON bi.payment_method = dpay.payment_method
    AND bi.payment_status = dpay.payment_status;
 GO
-
 
 IF OBJECT_ID('gold.fact_sample_shipment', 'V') IS NOT NULL
     DROP VIEW gold.fact_sample_shipment;
