@@ -53,7 +53,3 @@ GO
 -- Data quality checks, lineage, and load auditing
 CREATE SCHEMA audit;
 GO
-
--- Reference and static lookup datasets
-CREATE SCHEMA ref;
-GO
