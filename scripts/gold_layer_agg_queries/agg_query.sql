@@ -3,7 +3,7 @@
 Script: Gold Layer Analytical Queries
 Project: crytonyx_enteprice_dw
 Author: George Anele
-Date: 27 December 2025
+Date: 27-Dec-2025
 
 Purpose:
     This script contains curated analytical queries built on the Gold Layer
