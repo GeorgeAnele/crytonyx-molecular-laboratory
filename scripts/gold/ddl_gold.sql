@@ -1,17 +1,36 @@
+/*
+==============================================================================
+Script: Gold Layer Dimension and Fact Views
+Project: crytonyx_enterprise_dw
+Author: George Anele
+Created: 29-12-2025
+
+Purpose:
+    Defines business-ready dimensional and fact views in the Gold layer
+    to support analytics, reporting, and dashboard consumption.
+
+Notes:
+    - Views are derived from cleansed Silver-layer tables
+    - Surrogate keys are generated using ROW_NUMBER()
+    - Degenerate dimensions are retained where appropriate
+============================================================================== 
+*/
+
 IF OBJECT_ID('gold.dim_patient', 'V') IS NOT NULL
     DROP VIEW gold.dim_patient;
 GO
 
 CREATE VIEW gold.dim_patient AS
 SELECT
-    ROW_NUMBER() OVER (ORDER BY pt_id) AS patient_sk,   -- Surrogate key
+    ROW_NUMBER() OVER (ORDER BY pt_id) AS patient_sk,
     pt_id                              AS patient_id,
     first_name,
     last_name,
     gender,
     age,
     marital_status
-FROM (
+FROM
+(
     SELECT DISTINCT
         pt_id,
         first_name,
@@ -23,6 +42,7 @@ FROM (
 ) p;
 GO
 
+
 IF OBJECT_ID('gold.dim_test', 'V') IS NOT NULL
     DROP VIEW gold.dim_test;
 GO
@@ -31,8 +51,10 @@ CREATE VIEW gold.dim_test AS
 SELECT
     ROW_NUMBER() OVER (ORDER BY test_name) AS test_sk,
     test_name
-FROM (
-    SELECT DISTINCT test_name
+FROM
+(
+    SELECT DISTINCT
+        test_name
     FROM silver.lab_test
 ) t;
 GO
@@ -52,16 +74,24 @@ SELECT
     DAY(calendar_date)                         AS day_of_month,
     DATEPART(WEEKDAY, calendar_date)           AS day_of_week_number,
     DATENAME(WEEKDAY, calendar_date)           AS day_of_week_name,
-    CASE 
-        WHEN DATEPART(WEEKDAY, calendar_date) IN (1, 7) THEN 1 
-        ELSE 0 
+    CASE
+        WHEN DATEPART(WEEKDAY, calendar_date) IN (1, 7) THEN 1
+        ELSE 0
     END                                        AS is_weekend
-FROM (
-    SELECT DISTINCT test_date AS calendar_date FROM silver.lab_test
+FROM
+(
+    SELECT DISTINCT test_date AS calendar_date
+    FROM silver.lab_test
+
     UNION
-    SELECT DISTINCT invoice_date FROM silver.billing_invoice
+
+    SELECT DISTINCT invoice_date
+    FROM silver.billing_invoice
+
     UNION
-    SELECT DISTINCT CAST(pickup_datetime AS DATE) FROM silver.sample_shipment
+
+    SELECT DISTINCT CAST(pickup_datetime AS DATE)
+    FROM silver.sample_shipment
 ) d;
 GO
 
@@ -75,7 +105,8 @@ SELECT
     ROW_NUMBER() OVER (ORDER BY country) AS location_sk,
     country,
     continent
-FROM (
+FROM
+(
     SELECT DISTINCT
         country,
         continent
@@ -94,7 +125,8 @@ SELECT
     ROW_NUMBER() OVER (ORDER BY payment_method, payment_status) AS payment_sk,
     payment_method,
     payment_status
-FROM (
+FROM
+(
     SELECT DISTINCT
         payment_method,
         payment_status
@@ -111,8 +143,10 @@ CREATE VIEW gold.dim_courier AS
 SELECT
     ROW_NUMBER() OVER (ORDER BY courier) AS courier_sk,
     courier AS courier_name
-FROM (
-    SELECT DISTINCT courier
+FROM
+(
+    SELECT DISTINCT
+        courier
     FROM silver.sample_shipment
     WHERE courier IS NOT NULL
 ) c;
@@ -125,14 +159,14 @@ GO
 
 CREATE VIEW gold.fact_lab_test AS
 SELECT
-    lt.lab_test_sk        AS lab_test_id,      -- Degenerate key
-    dp.patient_sk         AS patient_sk,
-    dt.test_sk            AS test_sk,
-    dd.date_sk            AS test_date_sk,
-    dl.location_sk        AS location_sk,
+    lt.lab_test_sk    AS lab_test_id,
+    dp.patient_sk     AS patient_sk,
+    dt.test_sk        AS test_sk,
+    dd.date_sk        AS test_date_sk,
+    dl.location_sk    AS location_sk,
 
-    lt.sample_number      AS sample_id,        -- Degenerate dimension
-    lt.test_price_usd     AS test_amount_usd
+    lt.sample_number  AS sample_id,
+    lt.test_price_usd AS test_amount_usd
 FROM silver.lab_test lt
 JOIN gold.dim_patient dp
     ON lt.pt_id = dp.patient_id
@@ -151,19 +185,19 @@ GO
 
 CREATE VIEW gold.fact_billing_revenue AS
 SELECT
-    bi.billing_sk         AS billing_id,       -- Degenerate key
-    dp.patient_sk         AS patient_sk,
-    dd.date_sk            AS invoice_date_sk,
-    dpay.payment_sk       AS payment_sk,
+    bi.billing_sk       AS billing_id,
+    dp.patient_sk       AS patient_sk,
+    dd.date_sk          AS invoice_date_sk,
+    dpay.payment_sk     AS payment_sk,
 
-    bi.invoice_number     AS invoice_id,       -- Degenerate dimension
-    bi.sample_number      AS sample_id,
+    bi.invoice_number   AS invoice_id,
+    bi.sample_number    AS sample_id,
 
-    bi.currency           AS billing_currency,
-    bi.gross_amount_usd   AS gross_revenue_usd,
-    bi.tax_usd            AS tax_amount_usd,
-    bi.discount_usd       AS discount_amount_usd,
-    bi.net_amount_usd     AS net_revenue_usd
+    bi.currency         AS billing_currency,
+    bi.gross_amount_usd AS gross_revenue_usd,
+    bi.tax_usd          AS tax_amount_usd,
+    bi.discount_usd     AS discount_amount_usd,
+    bi.net_amount_usd   AS net_revenue_usd
 FROM silver.billing_invoice bi
 JOIN gold.dim_patient dp
     ON bi.pt_id = dp.patient_id
@@ -174,23 +208,24 @@ LEFT JOIN gold.dim_payment dpay
    AND bi.payment_status = dpay.payment_status;
 GO
 
+
 IF OBJECT_ID('gold.fact_sample_shipment', 'V') IS NOT NULL
     DROP VIEW gold.fact_sample_shipment;
 GO
 
 CREATE VIEW gold.fact_sample_shipment AS
 SELECT
-    ss.shipment_sk            AS shipment_sk,       -- Degenerate
-    dp.patient_sk             AS patient_sk,
-    dd.date_sk                AS pickup_date_sk,
-    dc.courier_sk             AS courier_sk,
-    dl.location_sk            AS origin_location_sk,
+    ss.shipment_sk       AS shipment_sk,
+    dp.patient_sk        AS patient_sk,
+    dd.date_sk           AS pickup_date_sk,
+    dc.courier_sk        AS courier_sk,
+    dl.location_sk       AS origin_location_sk,
 
-    ss.shipment_id            AS shipment_reference_id,
-    ss.sample_number          AS sample_id,
+    ss.shipment_id       AS shipment_reference_id,
+    ss.sample_number     AS sample_id,
 
-    ss.transit_hours          AS transit_duration_hours,
-    ss.shipping_cost_usd      AS shipping_cost_usd
+    ss.transit_hours     AS transit_duration_hours,
+    ss.shipping_cost_usd AS shipping_cost_usd
 FROM silver.sample_shipment ss
 JOIN gold.dim_patient dp
     ON ss.pt_id = dp.patient_id
