@@ -62,9 +62,7 @@ BEGIN
 
         PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from lab_test.csv';
 
-        ------------------------------------------------------------
-        -- ✅ ADDED: Clear Bronze RAW table before insert
-        ------------------------------------------------------------
+
         TRUNCATE TABLE bronze.lab_test_raw;
 
         INSERT INTO bronze.lab_test_raw (
@@ -131,9 +129,7 @@ BEGIN
 
         PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from billing_invoice.csv';
 
-        ------------------------------------------------------------
-        -- ✅ ADDED: Clear Bronze RAW table before insert
-        ------------------------------------------------------------
+  
         TRUNCATE TABLE bronze.billing_invoice_raw;
 
         INSERT INTO bronze.billing_invoice_raw (
@@ -200,9 +196,7 @@ BEGIN
 
         PRINT CAST(@@ROWCOUNT AS VARCHAR) + ' rows ingested from sample_shipment.csv';
 
-        ------------------------------------------------------------
-        -- ✅ ADDED: Clear Bronze RAW table before insert
-        ------------------------------------------------------------
+     
         TRUNCATE TABLE bronze.sample_shipment_raw;
 
         INSERT INTO bronze.sample_shipment_raw (
