@@ -120,7 +120,7 @@ Each layer enforces **quality gates before promotion**, ensuring only trusted da
 
 ## 👨🏽‍💻 About Me
 
-Hi, I’m **George (Chinedu) Anele**, a **Medical Laboratory Scientist in love with data** with a strong passion for building **robust, scalable, and insight-driven data platforms**, particularly in healthcare and enterprise analytics.
+Hi, I’m **George Chinedu Anele**, a **Medical Laboratory Scientist in love with data** with a strong passion for building **robust, scalable, and insight-driven data platforms**, particularly in healthcare and enterprise analytics.
 
 I specialize in:
 
