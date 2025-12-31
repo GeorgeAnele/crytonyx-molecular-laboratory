@@ -65,7 +65,7 @@ The Crytonyx EDW integrates **data engineering**, **data modeling**, and **analy
 ---
 
 ## 📂 Repository Structure
-
+```
 crytonyx-enterprise-dw/
 │
 ├── datasets/                     # Raw source data (CSV extracts)
@@ -87,7 +87,7 @@ crytonyx-enterprise-dw/
 ├── LICENSE                       # License information
 └── .gitignore                    # Git ignore rules
 
-
+```
 ---
 
 ## 🔍 Data Quality Validation
