@@ -68,25 +68,24 @@ The Crytonyx EDW integrates **data engineering**, **data modeling**, and **analy
 
 crytonyx-enterprise-dw/
 │
-├── datasets/ # Raw source data (CSV extracts)
+├── datasets/                     # Raw source data (CSV extracts)
 │
-├── docs/ # Architecture & design documentation
-│ ├── data_architecture.drawio
-│ ├── data_models.drawio
-│ ├── naming-conventions.md
-│ ├── data_catalog.md
+├── docs/                         # Architecture & design documentation
+│   ├── data_architecture.drawio  # Medallion architecture overview
+│   ├── data_models.drawio        # Star schema & analytical models
+│   ├── naming-conventions.md     # Enterprise naming standards
+│   └── data_catalog.md           # Gold-layer metadata definitions
 │
-├── scripts/ # SQL scripts and stored procedures
-│ ├── bronze/ # Ingestion and raw loads
-│ ├── silver/ # Cleansing and standardization
-│ ├── gold/ # Dimensions, facts, and analytics views
-│ ├── gold/ # gold_layer_agg_queries
+├── scripts/                      # SQL scripts and stored procedures
+│   ├── bronze/                   # Raw ingestion and source-aligned loads
+│   ├── silver/                   # Data cleansing, standardization, validation
+│   └── gold/                     # Dimensions, facts, and analytics views
 │
-├── tests/ # Data quality and validation scripts
-├── README.md # Project overview
-├── LICENSE # License information
-└── .gitignore # Git ignore rules
-
+├── tests/                        # Data quality and validation scripts
+│
+├── README.md                     # Project overview and documentation entry point
+├── LICENSE                       # License information
+└── .gitignore                    # Git ignore rules
 
 
 ---
