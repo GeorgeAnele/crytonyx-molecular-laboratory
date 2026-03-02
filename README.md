@@ -1,6 +1,6 @@
-# 🧠 Crytonyx Enterprise Data Warehouse & Analytics Project
+#  Crytonyx Enterprise Data Warehouse & Analytics Project
 
-Welcome to the **Crytonyx Enterprise Data Warehouse and Analytics Project** — an enterprise-grade data platform designed to demonstrate **end-to-end data engineering excellence** within a healthcare and laboratory analytics context.
+Welcome to the **Crytonyx Enterprise Data Warehouse and Analytics Project**  an enterprise-grade data platform designed to demonstrate **end-to-end data engineering excellence** within a healthcare and laboratory analytics context.
 
 This repository captures the **architecture, design, and implementation** of a modern **data warehouse and analytics solution** supporting laboratory operations, billing, logistics, and performance reporting.
 
@@ -8,17 +8,17 @@ It reflects my commitment to building **auditable, scalable, and business-aligne
 
 ---
 
-## 🏗️ Data Architecture
+##  Data Architecture
 
 This project adopts the **Medallion Architecture** (Bronze → Silver → Gold), a proven enterprise framework that enforces **data reliability, lineage, and analytical performance**.
 
 | **Layer**     | **Purpose**         | **Description**                                                                 |
 |--------------|---------------------|---------------------------------------------------------------------------------|
-| 🥉 **Bronze** | Raw Data            | Ingests unaltered laboratory, billing, and logistics data from CSV-based sources |
-| 🥈 **Silver** | Cleansed Data       | Applies data cleansing, standardization, deduplication, and validation rules    |
-| 🥇 **Gold**   | Business-Ready Data | Curated star-schema views optimized for analytics, KPIs, and BI consumption     |
+|  **Bronze** | Raw Data            | Ingests unaltered laboratory, billing, and logistics data from CSV-based sources |
+|  **Silver** | Cleansed Data       | Applies data cleansing, standardization, deduplication, and validation rules    |
+|  **Gold**   | Business-Ready Data | Curated star-schema views optimized for analytics, KPIs, and BI consumption     |
 
-📊 *Architecture Diagram: `docs/data_architecture.drawio`*
+
 
 ---
 
@@ -26,27 +26,18 @@ This project adopts the **Medallion Architecture** (Bronze → Silver → Gold),
 
 The Crytonyx EDW integrates **data engineering**, **data modeling**, and **analytics engineering** into a single cohesive ecosystem designed for healthcare laboratory intelligence.
 
-### 🔹 Core Deliverables
+###  Core Deliverables
 
 1. **Enterprise Data Architecture**
-   - Implemented a layered Medallion architecture ensuring clear separation of concerns.
-   - Enforced strict data lineage from source systems to analytics outputs.
 
 2. **Stored Procedure–Driven ETL Pipelines**
-   - Modular SQL-based ingestion, transformation, and load procedures.
-   - Deterministic, restartable, and auditable pipelines across all layers.
 
 3. **Analytical Data Modeling**
-   - Designed **Star Schema models** with conformed dimensions and atomic fact tables.
-   - Optimized for reporting on test volumes, turnaround times, revenue, and logistics.
-
+ 
 4. **Data Quality & Governance**
-   - Embedded validation checkpoints, audit logging, and referential integrity controls.
-   - Ensured traceability and compliance readiness.
 
 5. **Business & Operational Analytics**
-   - Enabled insights into laboratory performance, revenue generation, and operational efficiency.
-   - Delivered business-ready datasets for dashboards and executive reporting.
+
 
 ---
 
@@ -64,7 +55,7 @@ The Crytonyx EDW integrates **data engineering**, **data modeling**, and **analy
 
 ---
 
-## 📂 Repository Structure
+##  Repository Structure
 ```
 crytonyx-enterprise-dw/
 │
@@ -90,22 +81,8 @@ crytonyx-enterprise-dw/
 ```
 ---
 
-## 🔍 Data Quality Validation
 
-| **Validation Type**       | **Purpose**                   | **Example / Implementation**             |
-|---------------------------|-------------------------------|------------------------------------------|
-| **Null Checks**           | Ensures completeness          | `WHERE patient_id IS NULL`               |
-| **Data Type Validation**  | Schema enforcement            | CAST strings → DATE / INT / DECIMAL      |
-| **Duplicate Detection**   | Prevents double counting      | Business-key deduplication               |
-| **Referential Integrity** | Ensures relational accuracy   | Fact → Dimension foreign keys            |
-| **Business Rule Checks**  | Logical correctness           | `amount > 0`, `test_date <= GETDATE()`   |
-| **Audit Columns**         | ETL traceability              | `dwh_load_datetime`, `dwh_batch_id`      |
-
-Each layer enforces **quality gates before promotion**, ensuring only trusted data reaches the Gold layer.
-
----
-
-## 📘 Documentation Highlights
+## Documentation Highlights
 
 - **`naming-conventions.md`**  
   Enterprise-standard naming rules for schemas, tables, columns, and procedures.
@@ -144,20 +121,20 @@ My background allows me to bridge **clinical domain expertise** with **engineeri
 
 ---
 
-## 🛡️ License
+##  License
 
 This project is licensed under the **MIT License**.  
 You are free to use, modify, and reference this work with proper attribution.
 
 ---
 
-## 🙏 Appreciation
+##  Appreciation
 
 Special appreciation goes to **Baraa Khatib Salkini**, whose educational resources and open-source contributions provided valuable guidance and inspiration throughout the design and implementation of this data warehouse.
 
 ---
 
-## 🌟 Closing Note
+##  Closing Note
 
 This project reflects how I approach **data engineering as both a discipline and a craft** — combining **architectural discipline, technical depth, and business empathy** to transform raw data into strategic value.
 
