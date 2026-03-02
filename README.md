@@ -96,17 +96,10 @@ crytonyx-enterprise-dw/
 
 ---
 
-## 👨🏽‍💻 About Me
+##  About Me
 
 Hi, I’m **George Chinedu Anele**, a **Medical Laboratory Scientist in love with data** with a strong passion for building **robust, scalable, and insight-driven data platforms**, particularly in healthcare and enterprise analytics.
 
-I specialize in:
-
-- Data Warehousing & Architecture Design  
-- SQL & Analytical Data Modeling  
-- Stored Procedure–Driven ETL Pipelines  
-- Data Governance, Auditing & Quality Assurance  
-- Analytics Engineering & KPI Design  
 
 My background allows me to bridge **clinical domain expertise** with **engineering rigor**, delivering systems that are both technically sound and business-relevant.
 
