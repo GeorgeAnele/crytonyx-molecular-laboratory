@@ -22,7 +22,7 @@ This project adopts the **Medallion Architecture** (Bronze → Silver → Gold),
 
 ---
 
-## 📖 Project Overview
+## Project Overview
 
 The Crytonyx EDW integrates **data engineering**, **data modeling**, and **analytics engineering** into a single cohesive ecosystem designed for healthcare laboratory intelligence.
 
@@ -41,7 +41,7 @@ The Crytonyx EDW integrates **data engineering**, **data modeling**, and **analy
 
 ---
 
-## ⚙️ Tools & Technologies
+## Tools & Technologies
 
 | **Category**                 | **Tools / Technologies**                |
 |------------------------------|-----------------------------------------|
@@ -52,6 +52,7 @@ The Crytonyx EDW integrates **data engineering**, **data modeling**, and **analy
 | **Data Sources**             | Laboratory, Billing, Logistics (CSV)    |
 | **Documentation & Planning** | Notion                                  |
 | **Architecture Framework**   | Medallion (Bronze → Silver → Gold)      |
+| **Data Visualization**       | PowerBi     |
 
 ---
 
@@ -109,7 +110,7 @@ I specialize in:
 
 My background allows me to bridge **clinical domain expertise** with **engineering rigor**, delivering systems that are both technically sound and business-relevant.
 
-📍 Based in **Nigeria** | 🌍 Delivering global data solutions
+ Based in **Nigeria** |  Delivering global data solutions
 
 ---
 
