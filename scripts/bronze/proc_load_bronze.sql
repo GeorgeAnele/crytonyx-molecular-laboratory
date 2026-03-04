@@ -3,7 +3,7 @@
 Script: Bronze Layer Load Procedure
 Project: crytonyx_enterprise_dw
 Author: George Anele
-Date: 26-12-2025
+Date: 03-March-2026
 Purpose:
     Orchestrates raw ingestion of CSV datasets into the Bronze layer.
     - Preserves data as-is from source systems: LIMS, Billing, Logistics.
@@ -15,9 +15,6 @@ Usage Notes:
     - Errors are centrally handled and logged via TRY...CATCH.
 ==============================================================================
 */
-
-EXEC bronze.load_bronze
-
 CREATE OR ALTER PROCEDURE bronze.load_bronze
 AS
 BEGIN
