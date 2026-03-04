@@ -3,7 +3,7 @@
 Project: crytonyx_enteprice_dw
 Script: Bronze Layer Table Creation
 Author: George Anele
-Date: 25-Dec-2025
+Date: 03-March-2026
 
 Purpose:
     This script initializes the Bronze Layer of the crytonyx_enteprice_dw
@@ -15,7 +15,7 @@ Purpose:
     - Defines table schemas that closely mirror upstream source systems,
       preserving data fidelity at ingestion time.
     - Establishes the foundational landing zone for all raw data ingested
-      via ETL/ELT pipelines.
+      via ETL pipelines.
 
 Usage Notes:
     - The Bronze Layer is strictly intended for raw data ingestion with
